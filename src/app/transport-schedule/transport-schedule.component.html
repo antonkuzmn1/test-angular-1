@@ -1,0 +1,116 @@
+<section class="container">
+
+  <section class="form">
+
+    <section class="form-content">
+
+      <section class="from-swap-to">
+
+        <mat-form-field class="form-field">
+          <mat-label>From</mat-label>
+          <input matInput type="text" [(ngModel)]="from" (change)="setFromCode()">
+          <button *ngIf="from" matSuffix mat-icon-button aria-label="Clear" (click)="from=''">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <button mat-button aria-label="swap" class="swap-input-values" (click)="swap()">
+          <mat-icon>swap_horiz</mat-icon>
+        </button>
+
+        <mat-form-field class="form-field">
+          <mat-label>To</mat-label>
+          <input matInput type="text" [(ngModel)]="to" (change)="setToCode()">
+          <button *ngIf="to" matSuffix mat-icon-button aria-label="Clear" (click)="to=''">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+
+      </section>
+
+      <section class="date-selection">
+
+        <button mat-button (click)="setToday()">Today</button>
+
+        <button mat-button (click)="setTomorrow()">Tomorrow</button>
+
+        <mat-form-field>
+          <mat-label>Choose a date</mat-label>
+          <input matInput [matDatepicker]="picker" [(ngModel)]="date" (dateChange)="setDate()">
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+      </section>
+
+      <section class="transport-input">
+
+        <span class="example-list-section">
+          <mat-checkbox class="example-margin"
+                        [checked]="allComplete"
+                        [color]="task.color"
+                        [indeterminate]="someComplete()"
+                        (change)="setAll($event.checked)">
+            {{ task.name }}
+          </mat-checkbox>
+        </span>
+
+        <span class="example-list-section">
+          <ul>
+            @for (subtask of task.subtasks; track subtask) {
+              <li>
+                <mat-checkbox [(ngModel)]="subtask.completed"
+                              [color]="subtask.color"
+                              (ngModelChange)="updateAllComplete()">
+                  {{ subtask.name }}
+                </mat-checkbox>
+              </li>
+            }
+          </ul>
+        </span>
+
+      </section>
+
+      <section class="search-button">
+        <button mat-button (click)="search()">
+          Search
+          <mat-icon>search</mat-icon>
+          <span [hidden]="!isSearching"><mat-progress-bar mode="indeterminate"></mat-progress-bar></span>
+        </button>
+<!--        <mat-progress-bar mode="buffer"></mat-progress-bar>-->
+      </section>
+
+    </section>
+
+  </section>
+
+  <section class="result">
+
+    <section class="result-plate" *ngFor="let segment of segments">
+
+      <section class="result-plate-thread">
+        <h3>Thread</h3>
+        <p>{{segment.thread.title}}</p>
+        <p>{{segment.thread.carrier.title}}</p>
+        <p>{{segment.thread.transport_type}}</p>
+      </section>
+
+      <section class="result-plate-departure">
+        <h3>Departure</h3>
+        <p>{{segment.departure | date: 'yyyy-MM-dd HH:mm'}}</p>
+        <p>{{segment.from.title}}</p>
+        <p>{{segment.departure_terminal}}</p>
+      </section>
+
+      <section class="result-plate-arrival">
+        <h3>Arrival</h3>
+        <p>{{segment.arrival | date: 'yyyy-MM-dd HH:mm'}}</p>
+        <p>{{segment.to.title}}</p>
+        <p>{{segment.arrival_terminal}}</p>
+      </section>
+
+    </section>
+
+  </section>
+
+</section>

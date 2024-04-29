@@ -1,0 +1,84 @@
+section.container
+  width: 100%
+  min-height: calc(100vh - 48px)
+  max-height: calc(100vh - 48px)
+
+  & section.form
+    background-color: white
+    display: grid
+    justify-content: center
+    width: 100%
+
+    & section.form-content
+      padding: 20px
+
+      & section.from-swap-to
+
+        & mat-form-field
+          width: 45%
+
+        & button.swap-input-values
+          margin-bottom: 16px
+          max-width: 10%
+          min-width: 10%
+
+          & mat-icon
+            margin: 0
+
+      & section.date-selection
+
+        & button
+          width: 27.5%
+          margin-bottom: 16px
+          z-index: 0
+
+        & mat-form-field
+          width: 45%
+
+      //& section.transport-input
+      //  background-color: red
+      //
+      //  & span.example-list-section
+      //    background-color: aqua
+      //
+      //    & ul
+      //      background-color: green
+      //
+      //      & li
+      //        background-color: blue
+
+      & section.search-button
+
+        & button
+          width: 100%
+
+
+  & section.result
+    width: calc(100% - 10px)
+    overflow-y: visible
+    overflow-x: hidden
+    padding: 5px
+
+    & section.result-plate
+      display: flex
+      align-items: center
+      justify-content: center
+      margin-bottom: 5px
+      border-top: 1px solid lightgray
+      //border-radius: 15px
+      //box-shadow: 5px 5px 5px 5px #00000015
+
+      & section
+        width: calc(30% - 5px)
+        display: grid
+        align-items: start
+        gap: 2px
+
+        //&.result-plate-thread
+        //  background-color: rosybrown
+        //
+        //&.result-plate-departure
+        //  background-color: yellow
+        //
+        //&.result-plate-arrival
+        //  background-color: lawngreen
