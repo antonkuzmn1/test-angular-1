@@ -15,9 +15,11 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import mapboxgl from "mapbox-gl";
+import mapboxgl, {AnySourceImpl} from "mapbox-gl";
 import MapboxDraw from "@mapbox/mapbox-gl-draw"
+import {Feature} from 'geojson';
 import {environment} from "../../environments/environment";
+import {FormsModule} from "@angular/forms";
 
 /**
  * The PolygonEditorComponent handles the functionality related to editing polygons on a Mapbox map.
@@ -25,7 +27,9 @@ import {environment} from "../../environments/environment";
 @Component({
   selector: 'app-polygon-editor',
   standalone: true,
-  imports: [],
+  imports: [
+    FormsModule
+  ],
   templateUrl: './polygon-editor.component.html',
   styleUrl: './polygon-editor.component.sass'
 })
@@ -40,12 +44,18 @@ export class PolygonEditorComponent implements OnInit {
    */
   draw: any;
 
+  polygon: { hidden: boolean, height: number } = {
+    hidden: false,
+    height: 0
+  }
+
   /**
    * The Mapbox map style URL.
    * Default value is 'mapbox://styles/mapbox/streets-v11'.
    */
   style: string = 'mapbox://styles/mapbox/streets-v11';
 
+  // noinspection JSUnusedGlobalSymbols
   /**
    * The initial zoom level of the map.
    * Default value is 8.
@@ -87,7 +97,12 @@ export class PolygonEditorComponent implements OnInit {
       container: 'map',
       style: this.style,
       center: [this.lng, this.lat],
-      zoom: this.zoom,
+      // zoom: this.zoom,
+      // center: [-87.61694, 41.86625],
+      zoom: 15.99,
+      pitch: 40,
+      bearing: 20,
+      antialias: true,
       attributionControl: false,
     });
 
@@ -105,5 +120,60 @@ export class PolygonEditorComponent implements OnInit {
       displayControlsDefault: true,
     });
     this.map.addControl(this.draw, 'top-left');
+
+    this.map.on('draw.delete', (event: any) => {
+      console.log('delete')
+      const id: string = event.features[0].id
+      this.map.removeLayer(id)
+    })
+
+    this.map.on('draw.update', (event: any) => {
+      console.log('update')
+
+      const id: string = event.features[0].id
+
+      const features: Feature[] = this.draw.getAll().features
+      const feature: Feature | undefined = features
+        .find((feature: Feature) => {
+        return feature.id === id
+      })
+      console.log(feature)
+      if (feature === undefined) throw new Error('undefined param received')
+
+      const sourceRaw: AnySourceImpl = this.map.getSource(id)
+      if (sourceRaw.type === 'geojson') {
+        sourceRaw.setData({
+          "type": "FeatureCollection",
+          "features": features
+        })
+      }
+      this.map.setPaintProperty(id, 'fill-extrusion-height', this.polygon.height)
+    })
+
+    this.map.on('draw.create', (event: any) => {
+      console.log('create')
+
+      const id: string = event.features[0].id
+
+      this.map.addSource(id, {
+        'type': 'geojson',
+        'data': {
+          "features": this.draw.getAll().features,
+          "type": "FeatureCollection"
+        }
+      });
+      this.map.addLayer({
+        'id': id,
+        'type': 'fill-extrusion',
+        'source': id,
+        'paint': {
+          'fill-extrusion-color': 'orange',
+          'fill-extrusion-height': this.polygon.height,
+          'fill-extrusion-base': 0,
+          'fill-extrusion-opacity': 1
+        }
+      });
+
+    });
   }
 }

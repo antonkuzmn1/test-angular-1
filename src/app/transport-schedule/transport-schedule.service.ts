@@ -72,6 +72,17 @@ export class TransportScheduleService {
    * @returns An Observable emitting the city code data.
    */
   getCityCode(cityName: string): Observable<any[]> {
+
+    const testUrl: string = 'https://corsproxy.io/?https%3A%2F%2Fsuggests.rasp.yandex.net%2Fall_suggests%3Fformat%3Dold%26part%3D%25D0%25BC%25D0%25BE%25D1%2581%25D0%25BA%25D0%25B2%25D0%25B0'
+    this.http.get<any[]>(testUrl).subscribe({
+      next: (data: any[]) => {
+        console.log(data)
+      },
+      error: (error: any) => {
+        console.error(error)
+      }
+    })
+
     const url: string = `${environment.yandex.rasp.suggests.url}${encodeURIComponent(cityName)}`
     const forSend: string = `${environment.proxy.url}${url}`
     return this.http.get<any[]>(forSend)

@@ -1,3 +1,8 @@
 <section>
+  <input [hidden]="polygon.hidden"
+         [(ngModel)]="polygon.height"
+         type="number"
+         class="input-polygon-height"
+         placeholder="height">
   <div id="map" class="match-parent map"></div>
 </section>
