@@ -104,6 +104,7 @@ export class PolygonEditorComponent implements OnInit {
       bearing: 20,
       antialias: true,
       attributionControl: false,
+      projection: {name: 'globe'},
     });
 
     // Event listener for when the map is loaded
@@ -132,14 +133,19 @@ export class PolygonEditorComponent implements OnInit {
 
       const id: string = event.features[0].id
 
-      const features: Feature[] = this.draw.getAll().features
+      const features: Feature[] = event.features
+      // const features: Feature[] = this.draw.getAll().features
       const feature: Feature | undefined = features
         .find((feature: Feature) => {
         return feature.id === id
       })
-      console.log(feature)
       if (feature === undefined) throw new Error('undefined param received')
-
+      feature.properties = {
+        "height": this.polygon.height,
+        "base_height": 0,
+        "color": "white"
+      };
+      console.log(features)
       const sourceRaw: AnySourceImpl = this.map.getSource(id)
       if (sourceRaw.type === 'geojson') {
         sourceRaw.setData({
@@ -148,17 +154,19 @@ export class PolygonEditorComponent implements OnInit {
         })
       }
       this.map.setPaintProperty(id, 'fill-extrusion-height', this.polygon.height)
+      this.map.setPaintProperty(id, 'fill-extrusion-color', 'white')
+      console.log(this.draw.getAll())
     })
 
     this.map.on('draw.create', (event: any) => {
       console.log('create')
-
       const id: string = event.features[0].id
+      console.log(id)
 
       this.map.addSource(id, {
         'type': 'geojson',
         'data': {
-          "features": this.draw.getAll().features,
+          "features": event.features,
           "type": "FeatureCollection"
         }
       });
